@@ -77,13 +77,19 @@
 
   // 0. Let's explore a new way to use promises for data imports that might be a bit cleaner when importing lots of files
   
-  
-  
-  
+//  const testFunc = async function(){
+//    var start = Date.now()
+//    while(Date.now() < start + 10000){
+//
+//    }
+//}  
+//  testFunc();
   
   // 1. Our async function to build the map
-  // const requestData = async function() {
-    
+  const requestData = async function(){
+   const us = await d3.json("./datasets/us.json");
+   console.log(us);
+
     // 2. Draw a map of US using topoJSON
     // 2a. Import data as synchronous call to topoJSON data file
     // Care of Mike Bostock:
@@ -91,16 +97,32 @@
 
     
     // 2b. Pick out topographic features and build d3 helpers
-    
-    
-    // 2c. Draw states and outlines
+    var states = topo.json.features(us, us.objects.states);
+    var statesmesh = topo.json.features(us,us.objects.states);
+    var projection = d3.geoAlberUsa().fitSize([mapWidth,mapHeight],states);
+    var path = d3.geopath().projection(projection);
+    console.log(statesmesh);
+  
+  // 2c. Draw states and outlines
+  map.selectAll("path.states").data(states.features)
+  .join("path")
+  .attr("d","path")
+  .attr("note",d=>d.id)
+  .attr("d",path);
+  }
+
+
     
     
     
     // 3a. Import survey data as synchronous calls
     // "../datasets/state_survey_options.csv"
     // "../datasets/state-survey-responses.csv"
-    
+    var surveyData = await d3.csv("../datasets/state_survey_options.csv");
+    console.log(surveyData);
+    var stateIDs = await d3.csv("../datasets/state-survey-responses.csv");
+    console.log(stateIDs);
+
     
     // 3b. Generate the counts we will need
     
